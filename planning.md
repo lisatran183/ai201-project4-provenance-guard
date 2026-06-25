@@ -3,6 +3,8 @@
 ## Project Overview
 Provenance Guard is a backend API that classifies submitted creative writing as likely AI-generated or likely human-written, scores confidence in that classification, surfaces a plain-language transparency label, and provides an appeals workflow for contested decisions.
 
+---
+
 ## Detection Signals
 
 ### Signal 1: LLM Classifier (Groq — llama-3.3-70b-versatile)
@@ -152,6 +154,7 @@ under ~50 words.
 
 ### Submission Flow
 
+```
 POST /submit  (text, creator_id)
       │
       ▼
@@ -191,9 +194,11 @@ POST /submit  (text, creator_id)
          JSON response to client
          { content_id, attribution,
            confidence, label, status }
+```
 
 ### Appeal Flow:
 
+```
 POST /appeal  (content_id, creator_reasoning)
       │
       ▼
@@ -210,6 +215,7 @@ POST /appeal  (content_id, creator_reasoning)
       ▼
 JSON response:
 { status: "appeal_received", content_id }
+```
 
 ---
 
