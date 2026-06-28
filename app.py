@@ -6,12 +6,22 @@ import math
 from datetime import datetime, timezone
 
 from flask import Flask, request, jsonify
+from flask_limiter import Limiter
+from flask_limiter.util import get_remote_address
 from groq import Groq
 from dotenv import load_dotenv
 
 load_dotenv()
 
 app = Flask(__name__)
+
+limiter = Limiter(
+    key_func=get_remote_address,
+    app=app,
+    default_limits=[],
+    storage_uri="memory://",
+)
+
 client = Groq(api_key=os.getenv("GROQ_API_KEY"))
 LOG_FILE = "audit_log.json"
 
@@ -26,6 +36,16 @@ def read_log():
 def append_log(entry):
     entries = read_log()
     entries.append(entry)
+    with open(LOG_FILE, "w") as f:
+        json.dump(entries, f, indent=2)
+
+def update_log_status(content_id, new_status, extra_fields=None):
+    entries = read_log()
+    for entry in entries:
+        if entry.get("content_id") == content_id:
+            entry["status"] = new_status
+            if extra_fields:
+                entry.update(extra_fields)
     with open(LOG_FILE, "w") as f:
         json.dump(entries, f, indent=2)
 
@@ -65,42 +85,28 @@ Text: {text}"""
 def stylometric_classify(text):
     sentences = [s.strip() for s in re.split(r'[.!?]+', text) if s.strip()]
     words = text.split()
-    
+
     if len(sentences) < 2 or len(words) < 10:
         print("DEBUG Stylo: text too short, returning 0.5")
         return 0.5
 
-    # Metric 1: Sentence length variance
-    # AI text tends to have uniform sentence lengths (low variance)
     lengths = [len(s.split()) for s in sentences]
     mean_len = sum(lengths) / len(lengths)
     variance = sum((l - mean_len) ** 2 for l in lengths) / len(lengths)
     std_dev = math.sqrt(variance)
-    # Normalize: low std_dev (uniform) → high AI score
     length_score = max(0.0, min(1.0, 1.0 - (std_dev / 8.0)))
 
-    # Metric 2: Type-token ratio (vocabulary diversity)
     unique_words = set(w.lower().strip('.,!?;:"\'') for w in words)
     ttr = len(unique_words) / len(words)
-    # Adjusted: AI typically has TTR around 0.6-0.75
     ttr_score = max(0.0, min(1.0, 1.0 - (ttr / 0.65)))
 
-    # Metric 3: Punctuation density
-    # AI text tends to have moderate, predictable punctuation
     punct_count = sum(1 for c in text if c in '.,;:!?-()[]')
     punct_density = punct_count / len(words)
-    # Very low or very high punctuation → more human
-    # Moderate punctuation (0.1-0.2 per word) → more AI
     punct_score = max(0.0, min(1.0, 1.0 - abs(punct_density - 0.15) / 0.15))
 
-    # Metric 4: Average sentence complexity
-    # AI tends toward consistently medium-length sentences
     avg_len = mean_len
-    # Very short (<8) or very long (>25) avg → more human
-    # Medium avg (12-18) → more AI
     complexity_score = max(0.0, min(1.0, 1.0 - abs(avg_len - 15) / 15.0))
 
-    # Combine 4 metrics into one stylo score
     stylo_score = (
         0.35 * length_score +
         0.30 * ttr_score +
@@ -114,22 +120,17 @@ def stylometric_classify(text):
 
     return round(max(0.0, min(1.0, stylo_score)), 4)
 
-# ── Confidence Scoring: Option B (Agreement-Sensitive Blending) ──────────────
+# ── Confidence Scoring: Option B ─────────────────────────────────────────────
 
 def combine_scores(llm_score, stylo_score):
     diff = abs(llm_score - stylo_score)
-
     if diff <= 0.2:
-        # Signals agree: weighted average (LLM 60%, stylo 40%)
         combined = 0.6 * llm_score + 0.4 * stylo_score
     else:
-        # Signals disagree: force into uncertain band
         avg = (llm_score + stylo_score) / 2
         combined = max(0.4, min(0.6, avg))
-
     print(f"DEBUG Confidence: llm={llm_score:.2f} stylo={stylo_score:.2f} "
           f"diff={diff:.2f} combined={combined:.2f}")
-
     return round(combined, 4)
 
 # ── Transparency Label ───────────────────────────────────────────────────────
@@ -169,6 +170,7 @@ def ping():
     return jsonify({"status": "ok"})
 
 @app.route("/submit", methods=["POST"])
+@limiter.limit("10 per minute;100 per day")
 def submit():
     data = request.get_json()
     if not data or "text" not in data or "creator_id" not in data:
@@ -193,7 +195,8 @@ def submit():
         "confidence": confidence,
         "llm_score": llm_score,
         "stylo_score": stylo_score,
-        "status": "classified"
+        "status": "classified",
+        "appeal_reasoning": None
     })
 
     return jsonify({
@@ -204,6 +207,45 @@ def submit():
         "stylo_score": stylo_score,
         "label": label,
         "status": "classified"
+    })
+
+@app.route("/appeal", methods=["POST"])
+def appeal():
+    data = request.get_json()
+    if not data or "content_id" not in data or "creator_reasoning" not in data:
+        return jsonify({"error": "missing content_id or creator_reasoning"}), 400
+
+    content_id = data["content_id"]
+    reasoning = data["creator_reasoning"]
+    timestamp = datetime.now(timezone.utc).isoformat()
+
+    # Check the content_id exists
+    entries = read_log()
+    match = next((e for e in entries if e.get("content_id") == content_id), None)
+    if not match:
+        return jsonify({"error": "content_id not found"}), 404
+
+    # Update original entry status
+    update_log_status(content_id, "under_review", {
+        "appeal_reasoning": reasoning,
+        "appeal_timestamp": timestamp
+    })
+
+    # Append a separate appeal event entry
+    append_log({
+        "event": "appeal_filed",
+        "content_id": content_id,
+        "appeal_timestamp": timestamp,
+        "appeal_reasoning": reasoning,
+        "original_attribution": match.get("attribution"),
+        "original_confidence": match.get("confidence"),
+        "status": "under_review"
+    })
+
+    return jsonify({
+        "status": "appeal_received",
+        "content_id": content_id,
+        "message": "Your appeal has been received and the content is now under review."
     })
 
 @app.route("/log", methods=["GET"])

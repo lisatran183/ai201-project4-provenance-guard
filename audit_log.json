@@ -48,5 +48,136 @@
     "llm_score": 0.2,
     "stylo_score": 0.4554,
     "status": "classified"
+  },
+  {
+    "content_id": "f8a1c6d6-f9e5-48cd-b099-ea8b957311ad",
+    "creator_id": "test-user-1",
+    "timestamp": "2026-06-28T01:02:18.105421+00:00",
+    "attribution": "uncertain",
+    "confidence": 0.5763,
+    "llm_score": 0.8,
+    "stylo_score": 0.3525,
+    "status": "under_review",
+    "appeal_reasoning": "I wrote this myself from personal experience. I am a non-native English speaker and my writing style may appear more formal than typical.",
+    "appeal_timestamp": "2026-06-28T01:03:10.624242+00:00"
+  },
+  {
+    "event": "appeal_filed",
+    "content_id": "f8a1c6d6-f9e5-48cd-b099-ea8b957311ad",
+    "appeal_timestamp": "2026-06-28T01:03:10.624242+00:00",
+    "appeal_reasoning": "I wrote this myself from personal experience. I am a non-native English speaker and my writing style may appear more formal than typical.",
+    "original_attribution": "uncertain",
+    "original_confidence": 0.5763,
+    "status": "under_review"
+  },
+  {
+    "content_id": "194b83c7-eaf4-4d92-a8e1-273420f11671",
+    "creator_id": "ratelimit-test",
+    "timestamp": "2026-06-28T01:03:54.785351+00:00",
+    "attribution": "uncertain",
+    "confidence": 0.4,
+    "llm_score": 0.0,
+    "stylo_score": 0.5,
+    "status": "classified",
+    "appeal_reasoning": null
+  },
+  {
+    "content_id": "9e253e52-8710-45b7-9a54-1650ad479f4f",
+    "creator_id": "ratelimit-test",
+    "timestamp": "2026-06-28T01:03:55.147484+00:00",
+    "attribution": "uncertain",
+    "confidence": 0.4,
+    "llm_score": 0.0,
+    "stylo_score": 0.5,
+    "status": "classified",
+    "appeal_reasoning": null
+  },
+  {
+    "content_id": "83f23828-6b3f-4dfa-8920-6b49446e73f9",
+    "creator_id": "ratelimit-test",
+    "timestamp": "2026-06-28T01:03:55.378641+00:00",
+    "attribution": "uncertain",
+    "confidence": 0.4,
+    "llm_score": 0.0,
+    "stylo_score": 0.5,
+    "status": "classified",
+    "appeal_reasoning": null
+  },
+  {
+    "content_id": "794b31aa-5721-4697-ba26-b45d6cbda282",
+    "creator_id": "ratelimit-test",
+    "timestamp": "2026-06-28T01:03:55.719373+00:00",
+    "attribution": "uncertain",
+    "confidence": 0.4,
+    "llm_score": 0.0,
+    "stylo_score": 0.5,
+    "status": "classified",
+    "appeal_reasoning": null
+  },
+  {
+    "content_id": "6fa8f61f-4a0c-477a-9a11-67ad48d88372",
+    "creator_id": "ratelimit-test",
+    "timestamp": "2026-06-28T01:03:56.045726+00:00",
+    "attribution": "uncertain",
+    "confidence": 0.4,
+    "llm_score": 0.0,
+    "stylo_score": 0.5,
+    "status": "classified",
+    "appeal_reasoning": null
+  },
+  {
+    "content_id": "9b714b56-aa41-4477-993e-2111cd500413",
+    "creator_id": "ratelimit-test",
+    "timestamp": "2026-06-28T01:03:56.372735+00:00",
+    "attribution": "uncertain",
+    "confidence": 0.4,
+    "llm_score": 0.0,
+    "stylo_score": 0.5,
+    "status": "classified",
+    "appeal_reasoning": null
+  },
+  {
+    "content_id": "2a8d2315-d584-4fe3-b861-29e890d85297",
+    "creator_id": "ratelimit-test",
+    "timestamp": "2026-06-28T01:03:56.602217+00:00",
+    "attribution": "uncertain",
+    "confidence": 0.4,
+    "llm_score": 0.0,
+    "stylo_score": 0.5,
+    "status": "classified",
+    "appeal_reasoning": null
+  },
+  {
+    "content_id": "e36ee7fe-44b8-461c-9193-552d78620710",
+    "creator_id": "ratelimit-test",
+    "timestamp": "2026-06-28T01:03:56.945958+00:00",
+    "attribution": "uncertain",
+    "confidence": 0.4,
+    "llm_score": 0.0,
+    "stylo_score": 0.5,
+    "status": "classified",
+    "appeal_reasoning": null
+  },
+  {
+    "content_id": "93f168d0-a1e8-4303-8a6c-3ec8f93d6e79",
+    "creator_id": "ratelimit-test",
+    "timestamp": "2026-06-28T01:03:57.190355+00:00",
+    "attribution": "uncertain",
+    "confidence": 0.4,
+    "llm_score": 0.0,
+    "stylo_score": 0.5,
+    "status": "classified",
+    "appeal_reasoning": null
+  },
+  {
+    "content_id": "86d0697b-be29-495f-a4cb-6b6881a6f1d0",
+    "creator_id": "ratelimit-test",
+    "timestamp": "2026-06-28T01:03:57.425492+00:00",
+    "attribution": "uncertain",
+    "confidence": 0.4,
+    "llm_score": 0.0,
+    "stylo_score": 0.5,
+    "status": "classified",
+    "appeal_reasoning": null
   }
 ]
