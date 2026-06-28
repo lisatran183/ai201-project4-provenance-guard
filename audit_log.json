@@ -1,0 +1,12 @@
+[
+  {
+    "content_id": "e7b8fb18-006a-47e7-bb7c-1b84ca9a27e8",
+    "creator_id": "test-user-1",
+    "timestamp": "2026-06-28T00:40:08.057191+00:00",
+    "attribution": "likely_human",
+    "confidence": 0.0,
+    "llm_score": 0.0,
+    "stylo_score": null,
+    "status": "classified"
+  }
+]
