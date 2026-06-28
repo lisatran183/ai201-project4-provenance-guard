@@ -160,7 +160,7 @@ reflects a reasonable upper bound for even a very active user across a full day.
 
 **Rate limit test output** (12 rapid requests, limit is 10/minute):
 
-...
+<img width="126" height="176" alt="Screenshot 2026-06-27 at 6 04 41 PM" src="https://github.com/user-attachments/assets/68e95c1b-5be0-48ec-a218-78a7cbdc4c12" />
 
 ---
 
